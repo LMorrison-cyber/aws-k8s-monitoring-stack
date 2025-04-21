@@ -1,119 +1,115 @@
-# AWS EKS Monitoring Stack with Prometheus and Grafana
+<p align="center">
+  <img src="assets/banner.png" alt="AWS Kubernetes Monitoring Stack Banner" width="100%" />
+</p>
 
-This project sets up a monitoring stack on an AWS EKS cluster using **Prometheus** for collecting Kubernetes metrics and **Grafana** for visualization. The deployment process is automated with **Helm**, ensuring smooth and reproducible setup.
+# AWS Kubernetes Monitoring Stack
 
-## Features
-- **Prometheus**: Collects and stores time-series metrics from the Kubernetes cluster.
-- **Grafana**: Visualizes metrics in beautiful and interactive dashboards.
-- **AWS EKS**: The solution is deployed on Amazon Web Services Elastic Kubernetes Service (EKS).
-- **NGINX Ingress Controller**: Exposes Grafana securely to external users.
+![Terraform CI](https://github.com/LMorrison-cyber/aws-k8s-monitoring-stack/actions/workflows/terraform.yml/badge.svg)
 
-## Architecture Diagram
-![Architecture Diagram](./images/architecture.png)
+This project provisions a full Kubernetes monitoring stack on AWS using Terraform. It deploys Prometheus and Grafana via Helm charts into an EKS cluster, integrates NGINX Ingress, and exposes Grafana with dashboards for monitoring cluster health and performance.
 
-## Prerequisites
+---
 
-Ensure the following tools are installed:
-- [AWS CLI](https://aws.amazon.com/cli/)
-- [kubectl](https://kubernetes.io/docs/tasks/tools/install-kubectl/)
-- [Helm](https://helm.sh/docs/intro/install/)
-- [eksctl](https://eksctl.io/)
+## 📸 Screenshots
 
-## Setup Instructions
+<p align="center">
+  <img src="assets/grafana-dashboard.png" alt="Grafana Dashboard" width="80%" />
+</p>
 
-### 1. **Create an EKS Cluster**
+---
 
-First, create your EKS cluster using `eksctl`:
-```bash
-eksctl create cluster --name aws-k8s-monitoring-cluster --region us-east-1 --nodes 3 --node-type t3.medium
-2. Install Prometheus and Grafana using Helm
-Create the monitoring namespace:
-bash
-Copy
-Edit
-kubectl create namespace monitoring
-Install Prometheus:
-bash
-Copy
-Edit
-helm install prometheus prometheus-community/kube-prometheus-stack -n monitoring --create-namespace
-Install Grafana:
-bash
-Copy
-Edit
-helm install grafana bitnami/grafana -n monitoring
-3. Expose Grafana using Ingress
-Create an Ingress resource to expose Grafana. Use the following ingress.yaml:
+## 🏗️ Architecture
+
+<p align="center">
+  <img src="assets/architecture.png" alt="Architecture Diagram" width="100%" />
+</p>
+
+---
+
+## 🚀 Features
+
+- EKS Cluster Provisioning using Terraform
+- Prometheus and Grafana setup with Helm
+- Monitoring for Kubernetes nodes, pods, services
+- NGINX Ingress Controller for exposing Grafana
+- GitHub Actions CI for Terraform validation and deployment
+- Dashboard visualization of real-time metrics
+
+---
+
+## 📦 Project Structure
+
+. ├── assets/ │ ├── banner.png │ ├── grafana-dashboard.png │ └── architecture.png ├── terraform/ │ ├── main.tf │ ├── variables.tf │ ├── outputs.tf │ └── ... ├── .github/workflows/ │ └── terraform.yml └── README.md
 
 yaml
 Copy
 Edit
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: grafana-ingress
-  namespace: monitoring
-  annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /
-spec:
-  rules:
-  - host: <your-public-ip-or-domain>
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: grafana
-            port:
-              number: 80
-Apply the Ingress configuration:
+
+---
+
+## 🛠️ Setup
+
+### 1. Clone the Repo
+
+```bash
+git clone https://github.com/LMorrison-cyber/aws-k8s-monitoring-stack.git
+cd aws-k8s-monitoring-stack
+2. Initialize and Apply Terraform
+bash
+Copy
+Edit
+cd terraform
+terraform init
+terraform plan
+terraform apply
+3. Access Grafana
+URL: http://<your-domain-or-ip>/grafana
+
+Default credentials:
+
+User: admin
+
+Password: admin (change after login)
+
+🧰 S3 Workaround for Terraform
+Due to GitHub's file size limits, Terraform provider binaries are excluded from version control and stored in an S3 bucket.
+
+To restore Terraform provider files:
 
 bash
 Copy
 Edit
-kubectl apply -f ingress.yaml
-Replace <your-public-ip-or-domain> with the actual public IP or domain name provided by your AWS Load Balancer or NGINX Ingress.
+aws s3 cp --recursive s3://<your-bucket-name>/terraform/.terraform terraform/.terraform
+✅ GitHub Actions
+This project includes a CI pipeline via GitHub Actions that:
 
-4. Access Grafana
-Once the Ingress is set up, you can access Grafana through the provided domain or public IP. The default login credentials are:
+Validates Terraform syntax
 
-Username: admin
+Runs terraform plan
 
-Password: admin
+Ensures best practices compliance
 
-You can change the password after logging in.
+📌 Requirements
+AWS CLI configured
 
-5. Import Grafana Dashboards
-After logging into Grafana, you can import popular dashboards for Kubernetes monitoring from the Grafana Dashboard Library.
+Terraform 1.5+
 
-6. Visualize Kubernetes Metrics
-Grafana should automatically collect data from Prometheus. You can use pre-configured dashboards or create custom ones.
+kubectl
 
-7. Optional Enhancements
-You can further enhance your monitoring setup by:
+Helm
 
-Setting up alerts in Grafana: Configure alerts to be sent to Slack, email, or other services.
+AWS IAM permissions to manage EKS
 
-Visualize EKS Node + Pod Metrics: Create custom dashboards to visualize metrics specific to your EKS nodes and pods.
+🙌 Acknowledgements
+Bitnami Helm Charts
 
-Expose Grafana securely with Ingress: Set up a domain to securely expose Grafana externally.
+Grafana Labs
 
-Demo Links
-Grafana Dashboard
+Prometheus
 
-Prometheus Server
+📣 Connect
+Want to see the stack in action?
 
-Troubleshooting
-Grafana Dashboard not loading: Ensure that the Ingress is configured correctly and that your Grafana service is running.
+View project on GitHub
 
-Prometheus Metrics not appearing: Verify that Prometheus is properly scraping the Kubernetes metrics.
-
-Links
-Prometheus Documentation
-
-Grafana Documentation
-
-AWS EKS Documentation
-
-Feel free to explore and ask questions if needed!
+Let’s connect on LinkedIn
